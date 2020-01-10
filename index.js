@@ -153,12 +153,14 @@ export class ImageExtend {
                 if (xhr.status === 200) {
                     //success
                     let res = JSON.parse(xhr.responseText)
-                    self.imgURL = config.response(res)
-                    QuillWatch.active.uploadSuccess()
-                    self.insertImg()
-                    if (self.config.success) {
-                        self.config.success()
-                    }
+                    config.response(res).then((url)=>{
+                        self.imgURL = url;
+                        QuillWatch.active.uploadSuccess()
+                        self.insertImg()
+                        if (self.config.success) {
+                          self.config.success()
+                        }
+                      })
                 } else {
                     //error
                     if (self.config.error) {

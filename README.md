@@ -1,6 +1,7 @@
-sorry everyone, 由于作者自身原因，没有精力和时间处理issues,该插件已经不做维护了，希望大家见谅。
-# quill-image-extend-module 
-vue-quill-editor的增强模块，
+# quill-image.asyn-extend-module 
+vue-quill-editor的增强模块，图片上传,异步版本
+
+> 感谢`quill-image-extend-module`作者 *NextBoy* 的贡献
 
 功能：
  - 提供图片上传到服务器的功能
@@ -9,26 +10,19 @@ vue-quill-editor的增强模块，
  - 显示上传进度
  - 显示上传成功或者失败
  - 支持与其他模块一起使用（例如调整图片大小）
+ - response 处理采用异步模式,请`return new Promise`
 
 ## 更新情况
- - version 1.1
-   - 增加上传显示文字样式
-   - 增加图片超过自定义大小的回调 sizeError
-   - 修复同一页面多个富文本编辑器上传图片只能插入第一个编辑器的bug
-   - 引入QuillWatch 全局监听多个富文本编辑器 
-   
- - version 1.1.2
-    - 由于编辑器本身就有复制功能，因此取消了复制上传服务器的功能，避免冲突，复制上传采用富文本编辑器自带的功能
-   - 修复图片插入老是跑到最后面的问题
+ - version 1.0.1
 
 ## Install
 ```bash
-npm install quill-image-extend-module --save-dev
+npm install quill-image.asyn-extend-module --save
 ```
 ## use
 ```ecmascript 6
   import {quillEditor, Quill} from 'vue-quill-editor'
-  import {container, ImageExtend, QuillWatch} from 'quill-image-extend-module'
+  import {container, ImageExtend, QuillWatch} from 'quill-image.asyn-extend-module'
 
   Quill.register('modules/ImageExtend', ImageExtend)
 ```
@@ -46,7 +40,7 @@ npm install quill-image-extend-module --save-dev
 </template>
 <script>
   import {quillEditor, Quill} from 'vue-quill-editor'
-  import {container, ImageExtend, QuillWatch} from 'quill-image-extend-module'
+  import {container, ImageExtend, QuillWatch} from 'quill-image.asyn-extend-module'
 
   Quill.register('modules/ImageExtend', ImageExtend)
   export default {
@@ -81,8 +75,8 @@ npm install quill-image-extend-module --save-dev
 </script>
 
 ```
-## quill-image-extend-module 的所有可配置项
-```ecmascript 6
+## quill-image.asyn-extend-module 的所有可配置项
+```js
  editorOption: {
                      modules: {
                          ImageExtend: {  // 如果不作设置，即{}  则依然开启复制粘贴功能且以base64插入 
@@ -93,7 +87,9 @@ npm install quill-image-extend-module --save-dev
                              // 例如服务器返回{code: 200; data:{ url: 'baidu.com'}}
                              // 则 return res.data.url
                              response: (res) => {
-                                 return res.info
+                                 return new Promise((resolve, reject)=>{
+                                    resolve(url);
+                                  });
                              },
                              headers: (xhr) => {
                              // xhr.setRequestHeader('myHeader','myValue')
@@ -149,7 +145,7 @@ result: {
 ```
 
 ## 与其他模块一起使用（以resize-module为例子）
-```ecmascript 6
+```js
 <template>
   <div class="quill-wrap">
     <quill-editor
@@ -162,7 +158,7 @@ result: {
 </template>
 <script>
   import {quillEditor, Quill} from 'vue-quill-editor'
-  import {container, ImageExtend, QuillWatch} from 'quill-image-extend-module'
+  import {container, ImageExtend, QuillWatch} from 'quill-image.asyn-extend-module'
   import ImageResize from 'quill-image-resize-module'
 
   Quill.register('modules/ImageExtend', ImageExtend)
@@ -184,7 +180,9 @@ result: {
               headers: (xhr) => {
               },
               response: (res) => {
-                return res.info
+                  return new Promise((resolve, reject)=>{
+                    resolve(url);
+                  });
               }
             },
             toolbar: {
